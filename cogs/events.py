@@ -38,41 +38,41 @@ class Events(commands.Cog):
 
         def rank(rank):
             if (rank == "x"):
-                return "<:rankX:845092185052413952>"
+                return "<:rankX:1138082694610301029>"
             elif (rank == "u"):
-                return "<:rankU:845092171438882866>"
+                return "<:rankU:1138082691431010314>"
             elif (rank == "ss"):
-                return "<:rankSS:845092157139976192>"
+                return "<:rankSS:1138082689669406850>"
             elif (rank == "s+"):
-                return "<:rankSplus:845092140471418900>"
+                return "<:rankSplus:1138082686397845514>"
             elif (rank == "s"):
-                return "<:rankS:845092120662376478>"
+                return "<:rankS:1138082906712064070>"
             elif (rank == "s-"):
-                return "<:rankSminus:845092009101230080>"
+                return "<:rankSminus:1138082680538398810>"
             elif (rank == "a+"):
-                return "<:rankAplus:845091973248581672>"
+                return "<:rankAplus:1138082677262651424>"
             elif (rank == "a"):
-                return "<:rankA:845091931994587166>"
+                return "<:rankA:1138082903566319626>"
             elif (rank == "a-"):
-                return "<:rankAminus:845091885286424596>"
+                return "<:rankAminus:1138082674242764890>"
             elif (rank == "b+"):
-                return "<:rankBplus:845091818911301634>"
+                return "<:rankBplus:1138082671201894490>"
             elif (rank == "b"):
-                return "<:rankB:845089923089825812>"
+                return "<:rankB:1138082669377364098>"
             elif (rank == "b-"):
-                return "<:rankBminus:845089882698154044>"
+                return "<:rankBminus:1138082666114191391>"
             elif (rank == "c+"):
-                return "<:rankCplus:845088318509285416>"
+                return "<:rankCplus:1138082664725872771>"
             elif (rank == "c"):
-                return "<:rankC:845088262611533844>"
+                return "<:rankC:1138082661592744007>"
             elif (rank == "c-"):
-                return "<:rankCminus:845088252322775041>"
+                return "<:rankCminus:1138082659751436378>"
             elif (rank == "d+"):
-                return "<:rankD:845088198966640640>"
+                return "<:rankDplus:1138082656697978980>"
             elif (rank == "d"):
-                return "<:rankDplus:845088230588284959>"
+                return "<:rankD:1138082654856695919>"
             elif (rank == "z"):
-                return "<:unranked:845092197346443284>"
+                return "<:unranked:1138082908402364526>"
 
 
         def badgesfunc(json):
@@ -83,23 +83,23 @@ class Events(commands.Cog):
 
             for x in range(len(badgeEmojis)):
                 if ("leaderboard1" == badgeEmojis[x]):
-                    badges += "<:zRank1:847188809907961886>"
+                    badges += "<:zRank1:1138082638326943805>"
                 elif ("infdev" == badgeEmojis[x]):
-                    badges += "<:zINF:847189521899454505>"
+                    badges += "<:zINF:1138082645922807828>"
                 elif ("allclear" == badgeEmojis[x]):
-                    badges += "<:zPC:847188524247285771>"
+                    badges += "<:zPC:1138082631880290344>"
                 elif ("kod_founder" == badgeEmojis[x]):
-                    badges += "<:zKOD:847188743680557146>"
+                    badges += "<:zKOD:1138082636905054228>"
                 elif ("secretgrade" == badgeEmojis[x]):
-                    badges += "<:zSG:847188855865868338>"
+                    badges += "<:zSG:1138082642550599720>"
                 elif ("20tsd" == badgeEmojis[x]):
                     badges += "<:z20tsd:1138082628889751583>"
                 elif ("superlobby" == badgeEmojis[x]):
-                    badges += "<:zHDSL:847190320986325034>"
+                    badges += "<:zHDSL:1138082648137400450>"
                 elif ("early-supporter" == badgeEmojis[x]):
-                    badges += "<:zES:847188570769850380>"
+                    badges += "<:zES:1138082633725780089>"
                 elif ("100player" == badgeEmojis[x]):
-                    badges += "<:zSL:847188404163837953>"
+                    badges += "<:zSL:1138082626780020868>"
 
             return badges
 
