@@ -20,12 +20,11 @@
 1. Clone the repository:
    git clone [https://github.com/snof26/jimbot.git](https://github.com/snof26/jimbot.git)
 
-**Activate the Python environment:**
+2. Activate the Python environment:
+   `source env/bin/activate`
 
-`source env/bin/activate`
-
-Install dependencies:
-`pip install -r requirements.txt`
+3. Install dependencies:
+   `pip install -r requirements.txt`
 
 **Running the Bot:**
 
