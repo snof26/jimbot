@@ -16,7 +16,7 @@ class Events(commands.Cog):
         self.Toggle = not self.Toggle
         await ctx.send("trolled")   
 
-
+    # need to move this to another cog
     @commands.command(name="tetrisinfo", aliases=["tinfo", "ti"])
     async def tetrisinfo(self, ctx, userName):
 
@@ -93,7 +93,7 @@ class Events(commands.Cog):
                 elif ("secretgrade" == badgeEmojis[x]):
                     badges += "<:zSG:847188855865868338>"
                 elif ("20tsd" == badgeEmojis[x]):
-                    badges += "<:z20tsd:847188471633674270>"
+                    badges += "<:z20tsd:1138082628889751583>"
                 elif ("superlobby" == badgeEmojis[x]):
                     badges += "<:zHDSL:847190320986325034>"
                 elif ("early-supporter" == badgeEmojis[x]):
