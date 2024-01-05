@@ -20,24 +20,25 @@
 1. Clone the repository:
    git clone [https://github.com/snof26/jimbot.git](https://github.com/snof26/jimbot.git)
 
-Activate the Python environment:
-source env/bin/activate
+**Activate the Python environment:**
+
+`source env/bin/activate`
 
 Install dependencies:
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
-Running the Bot:
+**Running the Bot:**
 
 Start the main bot process:
-python3 bot.py
+`python3 bot.py`
 Start Lavalink for music functionality (in a separate terminal):
-cd cogs
-java -jar Lavalink.jar
+`cd cogs`
+`java -jar Lavalink.jar`
 
-Contributing:
+**Contributing:**
 
 We welcome contributions to JimBot! Please see the Contributing Guidelines for details.
 
-License:
+**License:**
 
 This bot is licensed under the MIT License. See LICENSE for more information.
