@@ -54,7 +54,7 @@ class Gacha(commands.Cog):
             json.dump(claims_to_save, f, indent=4)
 
     @commands.command(name="roll", aliases=["r"])
-    #@commands.cooldown(1, 3600, commands.BucketType.user)
+    @commands.cooldown(1, 3600, commands.BucketType.user)
     async def roll(self, ctx):
         try:
             rv = random.randint(1, 1000)
