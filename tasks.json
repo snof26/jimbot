@@ -2,5 +2,8 @@
     "333163516695412736": [
         "change rolling game to collecting game where aim is to collect all cards. loot crates give cards, the more expensive the loot crate, the more likely to get better high rarity cards.",
         "make more ways to get points/currency like other games. current methods are jim game, selling cards (only works when players have cards already), and gambling poitns"
+        
+        
+        "hey, funny idea. I installed a wav file imitating how minick would play the drums. Would be cool to add to music.py to check if user 447651478941728768 (Sean) is in call then playting that when 'jim join' is called"
     ]
 }
