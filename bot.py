@@ -203,8 +203,8 @@ async def help(ctx):
     await ctx.send(embed=embed)
 
 # Ensure the data folder exists
-if not os.path.exists("/home/pi/Desktop/jimbot/cogs/data"):
-    os.mkdir("/home/pi/Desktop/jimbot/cogs/data")
+if not os.path.exists("./cogs/data"):
+    os.mkdir("./cogs/data")
 
 # Getting token from config.json file, .gitignore 
 with open("config.json") as f:
