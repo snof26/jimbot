@@ -13,7 +13,18 @@ class Gacha(commands.Cog):
         self.image_data = op.load_workbook("./images.xlsx")  # Load data within __init__
         self.claims = {}
         self.load_claims()
-
+    @classmethod
+    def get_r_color(cls, rarity):
+        if rarity == "Common":
+            return discord.Color.green()
+        elif rarity == "Rare":
+            return discord.Color.blue()
+        elif rarity == "Epic":
+            return discord.Color.purple()
+        elif rarity == "Minickal":
+            return discord.Color.red()
+        elif rarity == "LeJIMdary":
+            return discord.Color.orange()
     @classmethod
     def get_rarity(cls, roll_value): 
         # Determines the rarity of a roll based on the provided brackets.
@@ -30,7 +41,7 @@ class Gacha(commands.Cog):
             return "LeJIMdary"
         else:
             raise ValueError("Roll value must be between 1 and 1000.")
-
+    
     @classmethod
     def update_embed_footer(cls, embed, user):
         # Update the embed's footer with the user who claimed the image
@@ -79,7 +90,7 @@ class Gacha(commands.Cog):
                 # Send embed and start claim timer
                 embed = discord.Embed(
                     title=image_name,
-                    color=discord.Color.green(),
+                    color=self.get_r_color(rarity),
                     timestamp=datetime.datetime.now(datetime.timezone.utc)
                 )
                 embed.set_image(url=image_url)
