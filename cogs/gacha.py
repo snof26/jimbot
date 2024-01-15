@@ -13,6 +13,7 @@ class Gacha(commands.Cog):
         self.image_data = op.load_workbook("./images.xlsx")  # Load data within __init__
         self.claims = {}
         self.load_claims()
+        
     @classmethod
     def get_r_color(cls, rarity):
         if rarity == "Common":
@@ -116,7 +117,7 @@ class Gacha(commands.Cog):
                     # Send the image with a claimed footer
                     embed = discord.Embed(
                         title=image_name,
-                        color=discord.Color.green(),
+                        color=self.get_r_color(rarity),
                         timestamp=datetime.datetime.now(datetime.timezone.utc)
                     )
                     embed.set_image(url=image_url)
