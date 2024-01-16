@@ -191,11 +191,12 @@ async def shutdown(ctx):
 async def help(ctx):
     embed = discord.Embed(title="Bot Commands", description="Here are the available commands:", color=discord.Color.blue())   
     # Add categories with emojis
-    embed.add_field(name=":game_die: Events", value="tetriocounter, tetrisinfo, toggle", inline=False)
+    embed.add_field(name=":game_die: Events", value="tetrisinfo, toggle", inline=False)
+    embed.add_field(name=":video_game: Gacha", value="roll, claims")
     embed.add_field(name=":bed: Hypickle", value="bedwarsstats, playerinfo", inline=False)
     embed.add_field(name=":musical_note: Music", value="add, disconnect, join, pause, play, queue, remove, repeat, resume, skip, stop, volume", inline=False)
     embed.add_field(name=":rocket: Phoenix 2", value="ship, ships", inline=False)
-    embed.add_field(name=":grey_question: Misc", value="help, minick, reload, serverinfo, wang", inline=False)
+    embed.add_field(name=":grey_question: Misc", value="help, minick, serverinfo, wang", inline=False)
     
     # Add the Jim Game category
     embed.add_field(name=":video_game: Jim Game", value="game, score, leaderboard", inline=False)
