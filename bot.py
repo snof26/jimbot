@@ -179,7 +179,7 @@ async def gay_rate(ctx, *, mentioned_user: discord.Member):
             title="Gay Detector",
             color=embed_color
         )
-        embed.description = f"{mentioned_user.display_name} is {gay_percentage}% happy :rainbow_flag:"
+        embed.description = f"{mentioned_user.display_name} is {gay_percentage}% gay :rainbow_flag:"
         await ctx.send(embed=embed)
     else:
         await ctx.send("Please mention a valid user to check gay with.")
