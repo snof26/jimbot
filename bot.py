@@ -170,19 +170,19 @@ async def minick(ctx, *, reason=None):
 async def gay_rate(ctx, *, mentioned_user: discord.Member):
     # Check if the mentioned user is a valid member of the server
     if mentioned_user:
-        # Generate a random happiness percentage (0-100)
-        happiness_percentage = random.randint(0, 100)
+        # Generate a random gay percentage (0-100)
+        gay_percentage = random.randint(0, 100)
 
         embed_color = discord.Color(random.randint(0, 0xFFFFFF))
         # Create an embed with the random color
         embed = discord.Embed(
-            title="Happy Detector",
+            title="Gay Detector",
             color=embed_color
         )
-        embed.description = f"{mentioned_user.display_name} is {happiness_percentage}% happy :rainbow_flag:"
+        embed.description = f"{mentioned_user.display_name} is {gay_percentage}% happy :rainbow_flag:"
         await ctx.send(embed=embed)
     else:
-        await ctx.send("Please mention a valid user to check happiness with.")
+        await ctx.send("Please mention a valid user to check gay with.")
 
 @client.command()
 @commands.is_owner()
