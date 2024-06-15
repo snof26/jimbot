@@ -5,18 +5,18 @@ import asyncio
 
 class Music(commands.Cog):
     vc: wavelink.Player = None
-    current_track = None
-    queue = None
-    disconnect_timer = None
-    repeat = False
+    current_track: wavelink.Playable = None
+    queue: asyncio.Queue = None
+    disconnect_timer: asyncio.TimerHandle = None
+    repeat: bool = False
 
-    def __init__(self, client):
+    def __init__(self, client: commands.Bot):
         self.client = client
         self.queue = asyncio.Queue()
 
     async def setup(self):
-        node: wavelink.Node = wavelink.Node(uri='http://localhost:2333', password='youshallnotpass')
-        await wavelink.NodePool.connect(client=self.client, nodes=[node])
+        node = wavelink.Node(uri='http://localhost:2333', password='youshallnotpass')
+        await wavelink.Pool.connect(client=self.client, nodes=[node])
 
     def start_disconnect_timer(self):
         self.disconnect_timer = self.client.loop.call_later(600, self.disconnect_after_timeout)
@@ -26,18 +26,19 @@ class Music(commands.Cog):
             self.disconnect_timer.cancel()
 
     async def disconnect_after_timeout(self):
-        await self.vc.disconnect()
-        self.vc = None
-        self.current_track = None
-        while not self.queue.empty():
-            await self.queue.get()  # Clear the queue
+        if self.vc:
+            await self.vc.disconnect()
+            self.vc = None
+            self.current_track = None
+            while not self.queue.empty():
+                await self.queue.get()  # Clear the queue
 
     @commands.Cog.listener()
     async def on_wavelink_node_ready(self, node: wavelink.Node):
         print(f"{node} is ready")
 
     @commands.Cog.listener()
-    async def on_wavelink_track_end(self, payload: wavelink.TrackEventPayload):
+    async def on_wavelink_track_end(self, payload: wavelink.TrackEndEventPayload):
         if payload.reason == 'FINISHED':
             if self.repeat:
                 await payload.player.play(self.current_track)  # Repeat the current track
@@ -50,7 +51,7 @@ class Music(commands.Cog):
 
     @commands.command(name="join")
     async def join(self, ctx):
-        channel = ctx.message.author.voice.channel
+        channel = ctx.author.voice.channel
         if channel:
             self.vc = await channel.connect(cls=wavelink.Player)
             await ctx.send(f"Joined `{channel.name}`")
@@ -59,28 +60,37 @@ class Music(commands.Cog):
 
     @commands.command(name="add")
     async def add(self, ctx, *, title: str):
-        tracks = await wavelink.YouTubeTrack.search(title)
+        tracks = await wavelink.Playable.search(title)
         if tracks:
             chosen_track = tracks[0]
             self.current_track = chosen_track
             if self.vc:
                 await self.queue.put(chosen_track)
                 await ctx.send(f"Added `{self.current_track}` to the queue")
-                print(self.queue)
+                print(f"Queue: {list(self.queue._queue)}")  # Debug statement
             else:
                 await ctx.send("Please use the `join` command first to join a voice channel.")
+        else:
+            await ctx.send("No tracks found.")
 
     @commands.command(name="play")
-    async def play(self, ctx):
-        if self.current_track and self.vc:
-            if not self.vc.is_playing():
-                track = await self.queue.get()
-                await self.vc.play(track)
-                await ctx.send(f"Playing `{track}`")
+    async def play(self, ctx: commands.Context):
+        if self.vc:
+            print(f"Player connected: {self.vc.connected}")  # Debug statement
+            print(f"Player playing: {self.vc.playing}")  # Debug statement
+            if not self.vc.playing:
+                if not self.queue.empty():
+                    track = await self.queue.get()
+                    print(f"Track to play: {track}")  # Debug statement
+                    await self.vc.play(track)
+                    await ctx.send(f"Playing `{track}`")
+                    print(f"Now playing: {track}")  # Debug statement
+                else:
+                    await ctx.send("The queue is empty.")
             else:
                 await ctx.send("The bot is already playing a track.")
         else:
-            await ctx.send("No track is added or the bot is not connected to a voice channel.")
+            await ctx.send("The bot is not connected to a voice channel.")
 
     @commands.command(name="pause")
     async def pause(self, ctx):
@@ -88,7 +98,7 @@ class Music(commands.Cog):
     
     @commands.command(name="resume")
     async def resume(self, ctx):
-        await self.vc.resume()
+        await self.vc.pause(False)
 
     @commands.command(name="stop")
     async def stop(self, ctx):
@@ -103,11 +113,10 @@ class Music(commands.Cog):
         await self.vc.set_volume(new_volume)
         await ctx.send(f"Volume set to {new_volume}%")
 
-
     @commands.command(name="skip")
     async def skip(self, ctx):
         if self.vc:
-            if not self.vc.is_playing():
+            if not self.vc.playing:
                 await ctx.send("No track is currently playing.")
                 return
 
@@ -161,7 +170,7 @@ class Music(commands.Cog):
 
     @commands.command(name="disconnect", aliases=["dc"])
     async def disconnect(self, ctx):
-        if self.vc and self.vc.is_connected():
+        if self.vc and self.vc.connected:
             await self.vc.disconnect()
             self.vc = None
             self.current_track = None
@@ -172,6 +181,7 @@ class Music(commands.Cog):
         else:
             await ctx.send("The bot is not connected to a voice channel.")
 
+
     @commands.command(name="repeat", aliases=["loop"])
     async def repeat_song(self, ctx):
         self.repeat = not self.repeat
@@ -180,7 +190,7 @@ class Music(commands.Cog):
         else:
             await ctx.send("Disabled song repeat.")
 
-async def setup(client):
+async def setup(client: commands.Bot):
     music_bot = Music(client)
     await client.add_cog(music_bot)
     await music_bot.setup()
