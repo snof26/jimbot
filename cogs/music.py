@@ -19,11 +19,14 @@ class Music(commands.Cog):
         await wavelink.Pool.connect(client=self.client, nodes=[node])
 
     def start_disconnect_timer(self):
-        self.disconnect_timer = self.client.loop.call_later(600, self.disconnect_after_timeout)
+        if self.disconnect_timer:
+            self.disconnect_timer.cancel()
+        self.disconnect_timer = self.client.loop.call_later(600, asyncio.create_task, self.disconnect_after_timeout())
 
     def cancel_disconnect_timer(self):
         if self.disconnect_timer and not self.disconnect_timer.cancelled():
             self.disconnect_timer.cancel()
+            self.disconnect_timer = None
 
     async def disconnect_after_timeout(self):
         if self.vc:
@@ -39,15 +42,13 @@ class Music(commands.Cog):
 
     @commands.Cog.listener()
     async def on_wavelink_track_end(self, payload: wavelink.TrackEndEventPayload):
-        if payload.reason == 'FINISHED':
+        if payload.reason == "finished":
             if self.repeat:
-                await payload.player.play(self.current_track)  # Repeat the current track
+                await self.vc.play(self.current_track)  # Repeat the current track
             elif not self.queue.empty():
-                next_track = await self.queue.get()
-                await payload.player.play(next_track)
-                self.start_disconnect_timer()  # Start the disconnect timer after playing the next track
+                await self.play_next_track()
             else:
-                self.cancel_disconnect_timer()  # Cancel the disconnect timer if the queue is empty
+                self.start_disconnect_timer()  # Start the disconnect timer if the queue is empty
 
     @commands.command(name="join")
     async def join(self, ctx):
@@ -57,36 +58,32 @@ class Music(commands.Cog):
             await ctx.send(f"Joined `{channel.name}`")
         else:
             await ctx.send("You are not connected to a voice channel.")
-
+    
     @commands.command(name="add")
     async def add(self, ctx, *, title: str):
         tracks = await wavelink.Playable.search(title)
         if tracks:
             chosen_track = tracks[0]
-            self.current_track = chosen_track
-            if self.vc:
-                await self.queue.put(chosen_track)
-                await ctx.send(f"Added `{self.current_track}` to the queue")
-                print(f"Queue: {list(self.queue._queue)}")  # Debug statement
-            else:
-                await ctx.send("Please use the `join` command first to join a voice channel.")
+            await self.queue.put(chosen_track)
+            await ctx.send(f"Added `{chosen_track.title}` to the queue")
+            if not self.vc.playing:
+                await self.play_next_track()
         else:
             await ctx.send("No tracks found.")
 
+    async def play_next_track(self):
+        if not self.queue.empty():
+            self.cancel_disconnect_timer()
+            next_track = await self.queue.get()
+            await self.vc.play(next_track)
+        else:
+            self.start_disconnect_timer()
+
     @commands.command(name="play")
-    async def play(self, ctx: commands.Context):
+    async def play(self, ctx):
         if self.vc:
-            print(f"Player connected: {self.vc.connected}")  # Debug statement
-            print(f"Player playing: {self.vc.playing}")  # Debug statement
             if not self.vc.playing:
-                if not self.queue.empty():
-                    track = await self.queue.get()
-                    print(f"Track to play: {track}")  # Debug statement
-                    await self.vc.play(track)
-                    await ctx.send(f"Playing `{track}`")
-                    print(f"Now playing: {track}")  # Debug statement
-                else:
-                    await ctx.send("The queue is empty.")
+                await self.play_next_track()
             else:
                 await ctx.send("The bot is already playing a track.")
         else:
@@ -95,10 +92,10 @@ class Music(commands.Cog):
     @commands.command(name="pause")
     async def pause(self, ctx):
         await self.vc.pause()
-    
+
     @commands.command(name="resume")
     async def resume(self, ctx):
-        await self.vc.pause(False)
+        await self.vc.resume()
 
     @commands.command(name="stop")
     async def stop(self, ctx):
@@ -115,21 +112,11 @@ class Music(commands.Cog):
 
     @commands.command(name="skip")
     async def skip(self, ctx):
-        if self.vc:
-            if not self.vc.playing:
-                await ctx.send("No track is currently playing.")
-                return
-
-            if self.queue.empty():
-                await ctx.send("The queue is empty.")
-                return
-
-            self.current_track = await self.queue.get()
-            await self.vc.play(self.current_track)
-            await ctx.send(f"Skipping to the next track: `{self.current_track}`")
+        if self.vc and self.vc.playing:
+            await self.play_next_track()
         else:
-            await ctx.send("The bot is not connected to a voice channel.")
-    
+            await ctx.send("No track is currently playing.")
+
     @commands.command(name="queue", aliases=["q"])
     async def queue(self, ctx):
         if self.queue.empty():
@@ -137,13 +124,14 @@ class Music(commands.Cog):
             return
 
         track_list = list(self.queue._queue)
-        queue_message = "Current Queue:\n"
+        queue_message = "Queue:\n"
         for index, track in enumerate(track_list, start=1):
             queue_message += f"{index}. `{track}`\n"
+        queue_message += f"\nCurrently Playing:\n▶ `{self.vc.current}`"
 
         await ctx.send(queue_message)
 
-    @commands.command(name="remove")
+    @commands.command(name="remove", aliases=["rq"])
     async def remove(self, ctx, position: int):
         if not self.queue.empty():
             queue_size = self.queue.qsize()
@@ -181,14 +169,17 @@ class Music(commands.Cog):
         else:
             await ctx.send("The bot is not connected to a voice channel.")
 
-
     @commands.command(name="repeat", aliases=["loop"])
     async def repeat_song(self, ctx):
-        self.repeat = not self.repeat
-        if self.repeat:
-            await ctx.send("Enabled song repeat.")
+        if self.vc.playing:
+            self.current_track = self.vc.current
+            self.repeat = not self.repeat
+            if self.repeat:
+                await ctx.send("Enabled song repeat.")
+            else:
+                await ctx.send("Disabled song repeat.")
         else:
-            await ctx.send("Disabled song repeat.")
+            await ctx.send("The bot is not playing a track.")
 
 async def setup(client: commands.Bot):
     music_bot = Music(client)
