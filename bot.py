@@ -225,10 +225,14 @@ async def help(ctx):
 if not os.path.exists("./cogs/data"):
     os.mkdir("./cogs/data")
 
+# Getting token from config.json file, .gitignore
+with open("config.json") as f:
+    config = json.load(f)
+    token = config["token"]
 
 # bot token
 if __name__ == "__main__":
-    client.run("REMOVED")
+    client.run(token)
 
 
 
