@@ -159,7 +159,7 @@ async def snoof(ctx, member: discord.Member, *, reason=None):
 @client.command()
 @commands.has_permissions(kick_members=True)
 async def minick(ctx, *, reason=None):
-    member = ctx.guild.get_member(682776622176534651)   
+    member = ctx.guild.get_member(1106556174293278750)   
     if member:
         await member.kick(reason=reason)
         await ctx.send(f'{member} was minicked')
@@ -225,14 +225,10 @@ async def help(ctx):
 if not os.path.exists("./cogs/data"):
     os.mkdir("./cogs/data")
 
-# Getting token from config.json file, .gitignore 
-with open("config.json") as f:
-    config = json.load(f)
-    token = config["token"]
 
 # bot token
 if __name__ == "__main__":
-    client.run(token)
+    client.run("REMOVED")
 
 
 
