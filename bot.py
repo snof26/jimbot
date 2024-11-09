@@ -225,14 +225,12 @@ async def help(ctx):
 if not os.path.exists("./cogs/data"):
     os.mkdir("./cogs/data")
 
-# Getting token from config.json file, .gitignore
-with open("config.json") as f:
-    config = json.load(f)
-    token = config["token"]
-
-# bot token
-if __name__ == "__main__":
-    client.run(token)
+# Run the bot using an environment variable for the token
+TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+if TOKEN:
+    client.run(TOKEN)
+else:
+    print("Error: DISCORD_BOT_TOKEN not found in environment variables.")
 
 
 
